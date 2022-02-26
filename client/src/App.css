@@ -1,0 +1,133 @@
+html{
+  height: 100%;
+}
+body{
+  background-color: #9185b3;
+  background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
+  font-family: 'Nunito', sans-serif, 'Regular 400';
+}
+.page-container{
+  position: relative;
+  min-height: 100vh;
+}
+.page-content{
+  padding-bottom: 100px;
+}
+#footer{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+header {
+  background-color: #33d9b2 transparent;
+  margin: auto -16px;
+  padding: 16px 32px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+}
+header h1 {
+  color: #fff;
+  font-family: "McLaren", cursive;
+  font-weight: 200;
+}
+.navbar-collapse{
+  background-color: #f7f1e3;
+  border-radius: 5px;
+}
+.App-header {
+  margin-left: 70px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.imgs-container{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+img.single-img{
+  margin-top: 8px;
+  vertical-align: middle;
+  /* width: 150px;
+  height: 150px;
+  opacity: 1; */
+}
+.img-box{
+  flex: 25%;
+  padding: 0 4px;
+  /* display: inline-block;
+  width: 150px;
+  height: 150px;
+  flex-direction: column;
+    padding-bottom: 0px;
+    padding-top: 0px;
+  position: relative;
+  top: 0; left: 0; */
+}
+
+.column{
+  padding: 0 4px;
+}
+
+.img-box:hover .single-img, .icon-box{
+  opacity: 0.5;
+}
+.img-box:hover .fa-window-close{
+  display: block;
+}
+.center{
+ padding: 0 50%;
+}
+.home-add-btn{
+  text-align: center;
+}
+.home-add-text{
+  padding-left: 40%;
+}
+.icon-box{
+  display: inline-block;
+  /* display: none; */
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  top: 47%; left: 40%;
+  color: black;
+}
+.container.trash{
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  position: relative;
+  top: 0; left: 0;
+}
+
+div.block-red{
+  background-color: red;
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  position: relative;
+  top: 0; left: 0;
+}
+div.block-blue{
+  background-color: aquamarine;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 40%; left: 47%;
+}
+.bi, .fa-window-close{
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  color: blue;
+  border: 1px solid blueviolet;
+  display: none;
+}
