@@ -29,6 +29,10 @@ header h1 {
   font-family: "McLaren", cursive;
   font-weight: 200;
 }
+.album-dtl{
+  font-family: 'Nunito', sans-serif, 'Bold 700';
+  /* change the font on the album details*/
+}
 .navbar-collapse{
   background-color: #f7f1e3;
   border-radius: 5px;
@@ -53,22 +57,14 @@ header h1 {
 }
 img.single-img{
   margin-top: 8px;
-  vertical-align: middle;
-  /* width: 150px;
-  height: 150px;
-  opacity: 1; */
+  /* width: 200px;
+  height: 200px; */
 }
 .img-box{
   flex: 25%;
   padding: 0 4px;
-  /* display: inline-block;
-  width: 150px;
-  height: 150px;
-  flex-direction: column;
-    padding-bottom: 0px;
-    padding-top: 0px;
-  position: relative;
-  top: 0; left: 0; */
+  max-width: var(--img-width);
+  max-height: var(--img-height);
 }
 
 .column{

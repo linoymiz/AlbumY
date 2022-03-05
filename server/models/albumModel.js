@@ -4,9 +4,9 @@ import {PictureSchema} from './pictureModel.js'
 
 
 const AlbumSchema = new Schema({
-    name: String,
-    creationDate: String,
-    numOfPics: Number,
+    name: {type: String, required: true},
+    creationDate: {type: String, default: (new Date()).toLocaleDateString('en-GB')},
+    numOfPics: {type: Number, default: 0},
     pictures: [PictureSchema]
 })
 

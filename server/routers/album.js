@@ -5,23 +5,32 @@ import {Picture} from '../models/pictureModel.js'
 import multer from 'multer'
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, __dirname + '/uploads')
+      cb(null, './uploads')
     },
     filename: function (req, file, cb) {
-        const now = new Date()
-        const nowFormat = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + '-' + now.getTime()
-        const uniqueSuffix = nowFormat + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.fieldname + '-' + uniqueSuffix)
+        const suffix = createASuffix(file)
+        cb(null, file.fieldname + '-' + suffix)
     }
 })
 const upload = multer({ storage: storage})
 function getAlbumSize(album) {
     return album.pictures.length
 }
-router.get('/', function (req, res) {
-    Album.findOne({
-        name: 'My First Album'
-    }, function (err, album) {
+function createASuffix(file){
+    //the unique suffix
+    const now = new Date()
+    const nowFormat = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + '-' + now.getTime()
+    const uniqueSuffix = nowFormat + '-' + Math.round(Math.random() * 1E9)
+
+    //the file type
+    const fileMimeType = file.mimetype.split('/')
+    const fileType = fileMimeType[1]
+
+    return uniqueSuffix + '.' + fileType
+}
+router.get('/:albumId', function (req, res) {
+    console.log('in router! id is ', req.params.albumId);
+    Album.findById(req.params.albumId, function (err, album) {
         if (album) {
             res.end(JSON.stringify(album))
         } else {
@@ -29,34 +38,37 @@ router.get('/', function (req, res) {
         }
     })
 })
-router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
-    // const {albumId, path} = req.body
-    // console.log('image source: ' + .substr(0, 20)+ '\nalbum id: ' + albumId);
-    
+//get all the albums in the collection
+router.get('/', function (req, res) {
+    Album.find(function (err, albums) {
+        if (albums) {
+            res.end(JSON.stringify(albums))
+        } else {
+            res.send('The collection is empty')
+        }
 
-    // upload(function (req, res,err){
-    //     if(err){
-    //         req.flash('error', err.message)
-    //         res.redirect('/albums')
-    //     }
-    //     else{
-    //         // console.log(req.body);
-    //         console.log(req.files);
-    //     }
-    // })
+    })
+})
+router.post('/create', function(req, res, err){
+    const albumName = req.body.newAlbumName;
+
+    Album.create({name: albumName}, function(err){
+        if(err){
+            // res.status(400)
+            alert('Could not create a new album due to invalid name')
+        }
+        else{
+            console.log('Successfully created a new album');
+            res.redirect('/')
+        }
+
+    })
+})
+router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
     const albumId = req.body.albumId
     const {path, filename }= req.file
-    // need to configurate it again- we get a file in that form:
-        // {[0]   fieldname: 'input',
-        // [0]   originalname: '20180808_115651 - Copy (2).jpg',
-        // [0]   encoding: '7bit',
-        // [0]   mimetype: 'image/jpeg',
-        // [0]   destination: 'uploads',
-        // [0]   filename: 'input-1645768067781-114320185',
-        // [0]   path: 'uploads\\input-1645768067781-114320185',
-        // [0]   size: 536628
-        // [0] }
-
+    const url = '/albums/' + albumId
+    
     Album.findById(albumId,
         function (err, album) {
         if (album) {
@@ -82,7 +94,7 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
                     }
                 )
                console.log('Updated the selected album succesfully');
-                res.redirect('/albums')
+                res.redirect(url)
             } else {
                 res.end('Please select a valid image')
             }
@@ -130,3 +142,11 @@ router.post('/delete', function(req, res){
 })
 
 export default router
+        // [0]   {fieldname: 'input',
+        // [0]   originalname: '20180808_115651 - Copy (2).jpg',
+        // [0]   encoding: '7bit',
+        // [0]   mimetype: 'image/jpeg',
+        // [0]   destination: 'uploads',
+        // [0]   filename: 'input-1645768067781-114320185',
+        // [0]   path: 'uploads\\input-1645768067781-114320185',
+        // [0]   size: 536628}

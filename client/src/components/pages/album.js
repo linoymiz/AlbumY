@@ -1,18 +1,15 @@
 import React from 'react'
-import Album from '../album'
+import Album from '../sub-components/album'
 import Footer from '../partials/footer'
 import Header from '../partials/header'
 
-function AlbumPage(){    
+function AlbumPage(props){    
     return (<div className="page-container">
     <div className='page-content'>
     <Header />
-    {/* <div className="container"> */}
-    <Album key={1} url='http://localhost:4000/albums'/>     
-    {/* </div> */}
+    <Album url='http://localhost:4000/albums/61e2b36f329a87660cb46b79' />     
     </div>   
      <Footer />
-
     </div>)
 }
 export default AlbumPage

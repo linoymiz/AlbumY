@@ -1,7 +1,7 @@
 import React from 'react'
 
 function AlbumDtl(props){
-    return <div>
+    return <div className='album-dtl'>
         <h2>{props.album.name}</h2>
     <ul>
         <li><span>{props.album.numOfPics} <span>Pictures</span></span></li>

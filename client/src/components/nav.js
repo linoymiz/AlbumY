@@ -13,7 +13,7 @@ function Nav(){
             <Link to='/home' className='nav-link'><HomeIcon /> <span className="sr-only">(current)</span></Link>
         </li>
         <li className="nav-item">
-          <Link to='/albums' className="nav-link">Albums</Link>
+          <Link to='/albums/61e2b36f329a87660cb46b79' className="nav-link">Albums</Link>
         </li>
         <li className="nav-item">
           <Link to='/album' className="nav-link">Album</Link>
