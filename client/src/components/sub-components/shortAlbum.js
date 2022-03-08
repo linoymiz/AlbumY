@@ -9,7 +9,7 @@ export default function ShortAlbum(props){
     return <div className = 'container rounded border border-2' onClick={handleClick}>
         <h3>{props.albumName}</h3>
         <div className= 'container'>
-            <AlbumPics pics={props.albumPics} short={true} />
+            <AlbumPics pics={props.albumPics} albumId={props.albumId} short={true} />
             <p>...</p>
         </div>
     </div>

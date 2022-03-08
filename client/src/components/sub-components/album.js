@@ -1,29 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import AlbumDtl from './albumDtl'
 import AlbumPics from './albumPics'
-import CreateImg from './createImg'
 
 function Album(props){
+    console.log('rendered');
     const url = props.url
-    const [album, setAlbum] = useState({})
-    console.log('in albumm');
+    const [data, setData] = useState({album:{albumId: '', albumRef: {}, pictures:[]}, isFetched: false})
+    // const [isFetched, setIsFetched] = useState(false)
     
     useEffect(() => {async function fetchItems(){
-        const currentUrl = window.location.pathname
+        try{
+            const currentUrl = window.location.pathname
         const albumId = currentUrl.split('/')[2]
+        console.log('in fetch react:', albumId);
         const urlToFetch = 'http://localhost:4000/albums/' + albumId
-        const data = await fetch(urlToFetch)
-        const fetchedAlbum = await data.json()
-        setAlbum(fetchedAlbum)
-        console.log(fetchedAlbum);
+        setData({album: data.album, isFetched: true})
+        const dataFetched = await fetch(urlToFetch)
+        const fetchedAlbum = await dataFetched.json()
+        console.log('FETCHED ALBUM',fetchedAlbum)
+
+        setData({album: {albumId: fetchedAlbum._id, albumRef: fetchedAlbum, pictures: fetchedAlbum.pictures }, isFetched: false})
+        // setData(fetchedAlbum)
+        // setIsFetched(true)
+        }
+        catch(e){
+            console.log(e)
+            setData({album: data.album, isFetched: false})
+        }
     } 
         fetchItems()
-    }, [url])
+    }, [])
     
     return <article>
-    <AlbumDtl album = {album}/>
-    <AlbumPics pics= {album.pictures}/>   
-    <CreateImg albumId = {album._id} url= {url}/>
+    <AlbumDtl album = {data.album}/>
+    <AlbumPics pics= {data.album.pictures} albumId={data.album.albumId} short={false} url={url}/>   
     </article>
 }
 

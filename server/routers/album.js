@@ -13,9 +13,11 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage})
+
 function getAlbumSize(album) {
-    return album.pictures.length
+    return (album.pictures.length)
 }
+
 function createASuffix(file){
     //the unique suffix
     const now = new Date()
@@ -28,12 +30,20 @@ function createASuffix(file){
 
     return uniqueSuffix + '.' + fileType
 }
+
+    function generateRelevantNo(pics,size){
+        const lastNum = pics[size-1].alt.split('#')[1].split(' ')[0]
+        return parseInt(lastNum) + 1;
+    }
 router.get('/:albumId', function (req, res) {
-    console.log('in router! id is ', req.params.albumId);
+    console.log('album to search: ', req.params.albumId);
     Album.findById(req.params.albumId, function (err, album) {
+        console.log('finding...');
         if (album) {
+            console.log('the album is', album);
             res.end(JSON.stringify(album))
         } else {
+            console.log('Not Found');
             res.send('Album does not exist')
         }
     })
@@ -66,12 +76,16 @@ router.post('/create', function(req, res, err){
 })
 router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
     const albumId = req.body.albumId
+    console.log('IN ADD PIC');
+    console.log('albumid: ', albumId);
     const {path, filename }= req.file
     const url = '/albums/' + albumId
     
     Album.findById(albumId,
         function (err, album) {
         if (album) {
+            const albumString = JSON.stringify(album)
+            console.log('album JSON', albumString);
             const albumSize = getAlbumSize(album) + 1
             console.log('album new size is: '+ albumSize);
             // const imgSrc = req.body.srcInput
@@ -79,7 +93,8 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
                 //the image src is valid
                 const newImg = new Picture({
                     src: path.replace('\\', '/'),
-                    alt: 'pic#' + albumSize + ' ' + filename
+                    alt: 'pic#' + generateRelevantNo(album.pictures, albumSize - 1) + ' ' + filename
+                    
                 })
                 newImg.save()
                 album.pictures.push(newImg)
@@ -94,7 +109,7 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
                     }
                 )
                console.log('Updated the selected album succesfully');
-                res.redirect(url)
+                // res.redirect(url)
             } else {
                 res.end('Please select a valid image')
             }
@@ -103,7 +118,7 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
         }
     })
 })
-router.post('/delete', function(req, res){
+router.delete('/delete', function(req, res){
     console.log('image id: ' + req.body.imgId + '\nalbum id: ' + req.body.albumId);
     const albumId = req.body.albumId
     Album.findOne({
