@@ -34,6 +34,8 @@ function CreateImg(props) {
 
     return (
     <div className = "container">
+    {console.log('type of album id:', typeof props.albumId )}
+    {console.log('the album id:', props.albumId )}
         {/* {data.isLoaded &&  */}
         <form action='/albums/add' method='post' encType="multipart/form-data">
         <label htmlFor="icon-button-file">

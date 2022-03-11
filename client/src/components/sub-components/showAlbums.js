@@ -4,7 +4,7 @@ import ShortAlbum from './shortAlbum'
 
 export default function ShowAlbums(props){
     const navigate = useNavigate()
-    const handlClick = (path) => navigate(path)
+    const handlClick = (path) => {navigate(path);}
 
     return <div className='container'>
         {props.albums?.map(album =>
@@ -13,7 +13,6 @@ export default function ShowAlbums(props){
                     key={album._id} albumId={album._id} 
                     navToAlbum={handlClick} 
                     albumName={album.name} albumPics={album.pictures} />            
-                {/* <Link to={'/albums/${album._id}'} className="nav-link">Albums</Link> */}
             </div>
         )}
     </div>

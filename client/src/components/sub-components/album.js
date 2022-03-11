@@ -3,7 +3,6 @@ import AlbumDtl from './albumDtl'
 import AlbumPics from './albumPics'
 
 function Album(props){
-    console.log('rendered');
     const url = props.url
     const [data, setData] = useState({album:{albumId: '', albumRef: {}, pictures:[]}, isFetched: false})
     // const [isFetched, setIsFetched] = useState(false)
@@ -29,7 +28,7 @@ function Album(props){
         }
     } 
         fetchItems()
-    }, [])
+    }, [url])
     
     return <article>
     <AlbumDtl album = {data.album}/>

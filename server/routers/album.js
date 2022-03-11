@@ -76,8 +76,6 @@ router.post('/create', function(req, res, err){
 })
 router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
     const albumId = req.body.albumId
-    console.log('IN ADD PIC');
-    console.log('albumid: ', albumId);
     const {path, filename }= req.file
     const url = '/albums/' + albumId
     
@@ -109,7 +107,7 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
                     }
                 )
                console.log('Updated the selected album succesfully');
-                // res.redirect(url)
+                res.redirect('back')
             } else {
                 res.end('Please select a valid image')
             }
@@ -119,13 +117,13 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
     })
 })
 router.delete('/delete', function(req, res){
-    console.log('image id: ' + req.body.imgId + '\nalbum id: ' + req.body.albumId);
+    // console.log('image id: ' + req.body.imgId + '\nalbum id: ' + req.body.albumId);
     const albumId = req.body.albumId
+    const url = '/albums/' + albumId
     Album.findOne({
         _id: albumId
     }, function (err, album) {
         if (album) {
-            console.log('got the album to update');
             const albumSize = getAlbumSize(album) - 1
             const imgId = req.body.imgId
             if (imgId) {
@@ -145,7 +143,8 @@ router.delete('/delete', function(req, res){
                 )
                 album.save()
                 console.log('Updated the selected album succesfully');
-                // res.redirect('/')
+                req.method = 'GET'
+                res.redirect(url)
             } else {
                 alert('Please select a valid image')
             }
