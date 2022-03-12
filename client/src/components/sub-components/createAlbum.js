@@ -9,12 +9,20 @@ function CreateAlbum(){
     const handleClick = () => setIsOpen(true)
     const handleClose = () => setIsOpen(false)
 
+    const addStyle = (element) => {
+      return element === 'icon' ? {fontSize: '100px', color: '#e7d09cc7'} 
+                               : {color: 'rgb(222 179 83)', position: 'absolute'}
+    }
+
     return <div className='container home-add-btn'>
-    <Button onClick={handleClick}>
-        <AddCircleOvutlineRoundedIcon className='' sx={{fontSize: '100px', color: '#DAA520'}} />
-    </Button>
-    <h6 className='container' style={{color: '#DAA520', position: 'absolute'}}>Click here to add a new album to your collection</h6>
-          <Modal show={isOpen}>
+      <Button onClick={handleClick}>
+        <AddCircleOvutlineRoundedIcon sx={addStyle('icon')} />
+      </Button>
+      <h6 className='container' style={addStyle('text')}>Click here to add a new album to your collection</h6>
+    </div>
+}
+export default CreateAlbum
+    {/* <Modal show={isOpen}>
          <Modal.Header>
           <Modal.Title>Create A New Album</Modal.Title>
         </Modal.Header>
@@ -32,9 +40,5 @@ function CreateAlbum(){
           </button>
         </Modal.Footer>
       </form> 
-      </Modal>
-    </div>
-}
-// return <h1>Linoy</h1>
-// }
-export default CreateAlbum
+      </Modal> 
+    */}

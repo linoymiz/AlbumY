@@ -13,14 +13,17 @@ function Album(props){
         const albumId = currentUrl.split('/')[2]
         console.log('in fetch react:', albumId);
         const urlToFetch = 'http://localhost:4000/albums/' + albumId
-        setData({album: data.album, isFetched: true})
-        const dataFetched = await fetch(urlToFetch)
-        const fetchedAlbum = await dataFetched.json()
-        console.log('FETCHED ALBUM',fetchedAlbum)
-
-        setData({album: {albumId: fetchedAlbum._id, albumRef: fetchedAlbum, pictures: fetchedAlbum.pictures }, isFetched: false})
-        // setData(fetchedAlbum)
-        // setIsFetched(true)
+        await fetch(urlToFetch)
+        .then(response => {
+            if(!response.ok)
+                throw new Error('something went wrong, didn\'t manage to get the album')
+            return response.json()
+        })
+        .then(fetchedAlbum => {
+            console.log('FETCHED ALBUM',fetchedAlbum)        
+            setData({album: {albumId: fetchedAlbum._id, albumRef: fetchedAlbum, pictures: fetchedAlbum.pictures }, isFetched: false})
+        })
+        .catch(error => console.log('Could not able to fetch the data ', error))
         }
         catch(e){
             console.log(e)
@@ -30,7 +33,7 @@ function Album(props){
         fetchItems()
     }, [url])
     
-    return <article>
+    return <article className='container album'>
     <AlbumDtl album = {data.album}/>
     <AlbumPics pics= {data.album.pictures} albumId={data.album.albumId} short={false} url={url}/>   
     </article>

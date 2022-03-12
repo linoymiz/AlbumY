@@ -43,16 +43,14 @@ function AlbumPics(props){
   
 
     return <div className="container">
-      <div style={{padding: '20px 0px'}}>
-          <div className="row row-cols-6">
-          {props.pics?.map((pic, index) =>
-            <Img key={index} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>
-          )}
-            
+            <CreateImg albumId={props.albumId} url={props.url}/>
+            <div style={{padding: '20px 0px'}}>
+              <div className="row row-cols-6">
+                {props.pics?.map((pic, index) =>
+                <Img key={index} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>
+                )}  
+              </div>
+            </div>
           </div>
-        </div>
-        <CreateImg albumId={props.albumId} url={props.url}/>
-
-  </div>
 }
 export default AlbumPics

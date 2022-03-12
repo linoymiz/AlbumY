@@ -8,9 +8,8 @@ function App() {
   return (
     <div className= 'page-container'>
       <Header />
-      <Nav />
       <Home />
-      <Footer />
+      {/* <Footer /> */}
     </div>
 
   );

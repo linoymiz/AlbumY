@@ -18,7 +18,7 @@ function CreateImg(props) {
     const Input = styled('input')({
         display: 'none',
     });
-    const btnStyle = {color: "#f2e677"}
+    const btnStyle = {color: "rgb(89 13 13 / 47%)"}
 
     // useEffect(()=>{ //when page is up and prps changed
     //     console.log('load ', data.albumId);
@@ -33,10 +33,9 @@ function CreateImg(props) {
     // },[props.albumId])
 
     return (
-    <div className = "container">
+    <div className = "container album-dtl">
     {console.log('type of album id:', typeof props.albumId )}
     {console.log('the album id:', props.albumId )}
-        {/* {data.isLoaded &&  */}
         <form action='/albums/add' method='post' encType="multipart/form-data">
         <label htmlFor="icon-button-file">
         <Input accept="image/*"

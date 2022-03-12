@@ -15,7 +15,7 @@ function Home(){
         fetchItems()
     }, [url])
 
-    return <div>
+    return <div className='container'>
       <ShowAlbums albums={albums} />
       <CreateAlbum />
     </div>

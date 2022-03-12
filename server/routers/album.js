@@ -48,7 +48,7 @@ router.get('/:albumId', function (req, res) {
         console.log('finding...');
         if (album) {
             console.log('the album is', album);
-            res.end(JSON.stringify(album))
+            res.send(album)
         } else {
             console.log('Not Found');
             res.send('Album does not exist')
