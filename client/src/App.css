@@ -6,6 +6,9 @@ body{
   background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
   font-family: 'Nunito', sans-serif, 'Regular 400';
 }
+.padding{
+  padding-top: 2rem;
+}
 .page-container{
   position: relative;
   min-height: 100vh;
@@ -24,14 +27,23 @@ header {
   /* box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3); */
 }
 header h1 {
-  color: darksalmon transparent;
-  border-color: darkorange;
+
   font-family: "McLaren", cursive;
   font-weight: 200;
 }
 .album-dtl{
-  font-family: 'Nunito', sans-serif, 'Bold 700';
+  font-family: 'Nunito', sans-serif;
+  
   /* change the font on the album details*/
+}
+.album-dtl h2{
+  font-weight: 700;
+  color: darksalmon;
+  -webkit-text-stroke: 0.25px #ecc99e;
+}
+.album-dtl p{
+  display: inline-block;
+  font-size: small;
 }
 .navbar-collapse{
   background-color: #f7f1e3;

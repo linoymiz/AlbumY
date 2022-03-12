@@ -32,7 +32,7 @@ function AlbumPics(props){
 
   async function handleDeleteImg(imgID){
       try{
-        axios.delete('http://localhost:4000/albums/delete', {data: {albumId: props.albumId, imgId: imgID}})
+        axios.delete('/albums/delete', {data: {albumId: props.albumId, imgId: imgID}})
         console.log('Deleted image successfully.');
       }
       catch(e){

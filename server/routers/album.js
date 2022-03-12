@@ -3,9 +3,13 @@ const router = express.Router()
 import {Album} from '../models/albumModel.js'
 import {Picture} from '../models/pictureModel.js'
 import multer from 'multer'
+import fs from 'fs'
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, './uploads')
+        const path = './uploads'
+        fs.mkdirSync(path, { recursive: true })
+        return cb(null, path)
     },
     filename: function (req, file, cb) {
         const suffix = createASuffix(file)
@@ -32,8 +36,11 @@ function createASuffix(file){
 }
 
     function generateRelevantNo(pics,size){
-        const lastNum = pics[size-1].alt.split('#')[1].split(' ')[0]
-        return parseInt(lastNum) + 1;
+        if (size == 0) return 1;
+        else{
+            const lastNum = pics[size-1].alt.split('#')[1].split(' ')[0]
+            return parseInt(lastNum) + 1;
+        }
     }
 router.get('/:albumId', function (req, res) {
     console.log('album to search: ', req.params.albumId);
@@ -78,6 +85,7 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
     const albumId = req.body.albumId
     const {path, filename }= req.file
     const url = '/albums/' + albumId
+    console.log('in add route:\n albumId: ' + albumId + '\npath: '+ path + '\n fileName: '+ filename);
     
     Album.findById(albumId,
         function (err, album) {
@@ -91,8 +99,7 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
                 //the image src is valid
                 const newImg = new Picture({
                     src: path.replace('\\', '/'),
-                    alt: 'pic#' + generateRelevantNo(album.pictures, albumSize - 1) + ' ' + filename
-                    
+                    alt: 'pic#' + generateRelevantNo(album.pictures, albumSize - 1) + ' ' + filename      
                 })
                 newImg.save()
                 album.pictures.push(newImg)
@@ -107,7 +114,7 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
                     }
                 )
                console.log('Updated the selected album succesfully');
-                res.redirect('back')
+                res.redirect(url)
             } else {
                 res.end('Please select a valid image')
             }
@@ -144,7 +151,13 @@ router.delete('/delete', function(req, res){
                 album.save()
                 console.log('Updated the selected album succesfully');
                 req.method = 'GET'
+                try{
                 res.redirect(url)
+                console.log('redirected delte successfully');
+                }
+                catch(e){
+                    console.log('error from redirecting delete: ', e.message);
+                }
             } else {
                 alert('Please select a valid image')
             }
