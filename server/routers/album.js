@@ -3,7 +3,7 @@ const router = express.Router()
 import {Album} from '../models/albumModel.js'
 import {Picture} from '../models/pictureModel.js'
 import multer from 'multer'
-import fs from 'fs'
+import fs, {unlink} from 'fs'
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -132,7 +132,8 @@ router.delete('/delete', function(req, res){
     }, function (err, album) {
         if (album) {
             const albumSize = getAlbumSize(album) - 1
-            const imgId = req.body.imgId
+            const img = req.body.img
+            const imgId = img._id
             if (imgId) {
                 // delete the image from the picture and from the album collections
                 Picture.deleteOne({_id: imgId}).then(console.log('Deleted selected image: ' + imgId)).catch(function(err){ console.log(err)})
@@ -150,7 +151,10 @@ router.delete('/delete', function(req, res){
                 )
                 album.save()
                 console.log('Updated the selected album succesfully');
-                req.method = 'GET'
+                unlink(img.src, (err) => {
+                    if(err) console.log('error from deleting img', err)
+                    else console.log('successfully deleted img from the uploads folder!\nimg src: ', img.src);
+                })
                 try{
                 res.end()
                 }

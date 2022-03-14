@@ -33,9 +33,9 @@ function AlbumPics(props){
     }
   }
 
-  async function handleDeleteImg(imgID){
+  async function handleDeleteImg(reqImg){
       try{
-        axios.delete('/albums/delete', {data: {albumId: props.albumId, imgId: imgID}})
+        axios.delete('/albums/delete', {data: {albumId: props.albumId, img: reqImg}})
         .then(() => window.location.reload(false))
         .catch(e => console.log('something went wrong, delete was not complete well.'))
       }

@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function Img(props){
     function handleClick(){
-        props.deleteImg(props.img._id)
+        props.deleteImg(props.img)
     }
     return <div className="container img-box col-xs-2" >
         <div>
