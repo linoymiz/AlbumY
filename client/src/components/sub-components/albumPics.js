@@ -3,7 +3,7 @@ import Img from './img'
 import axios from 'axios'
 import CreateImg from './createImg'
 import { useNavigate } from 'react-router-dom'
-
+import ImageList from '@mui/material/ImageList';
 
 function AlbumPics(props){
   const LIMIT_PICS = 4
@@ -45,29 +45,22 @@ function AlbumPics(props){
   }
   setImgSize() // change the img dimensions conditionally
   
-
-    return <div className="container">
+  return <div className="container">
             {!props.short && <CreateImg albumId={props.albumId} url={props.url}/>}
             <div style={{padding: '20px 0px'}}>
-              <div className="row row-cols-6">
-                {props.pics?.map((pic, index) =>
-                {
-                  if(!props.short ){
-                    console.log(!props.short);
-                    console.log(index);
-                    return <Img key={index} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>
-                  }
-                  else if(props.short && index < LIMIT_PICS){
-                    console.log(props.short);
-                    console.log(index);
-                   return <Img key={index} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>
-                  }
-                  else if(props.short && props.pics.length > LIMIT_PICS && index === LIMIT_PICS)
-                  return null
-                }
-                )}  
-              </div>
-            </div>
-          </div>
+            <ImageList sx={{ width: 500, height: 450 }} variant="woven" cols={3} gap={8}>
+  {props.pics?.map((pic, index) => {
+    if(!props.short ){
+    return (<Img key={pic.alt} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>)
+    }
+    else if(props.short && index < LIMIT_PICS){
+      return (<Img img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>)
+    }
+    else if(props.short && props.pics.length > LIMIT_PICS && index === LIMIT_PICS)
+      return null
+  })}
+  </ImageList>
+  </div>
+</div>
 }
 export default AlbumPics

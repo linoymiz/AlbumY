@@ -1,17 +1,18 @@
 import React from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
+import ImageListItem from '@mui/material/ImageListItem';
 
 export default function Img(props){
     function handleClick(){
         props.deleteImg(props.img)
     }
-    return <div className="container img-box col-xs-2" >
-        <div>
-            <button className='delete' hidden={!props.hideDelete} onClick={handleClick}><DeleteIcon /></button>
-            {/* <IconButton aria-label="delete"> */}
-                
-            {/* </IconButton> */}
-            <img src={props.img.alt.split(' ')[1]} className="single-img img-thumbnail" alt={props.img.alt}></img>           
-        </div>
-    </div>
+    return (<ImageListItem>
+          <button className='delete' hidden={!props.hideDelete} onClick={handleClick}><DeleteIcon /></button>
+            <img style={{objectFit: "cover", filter: "none", borderRadius: "8px"}}
+                src={`${props.img.alt.split(' ')[1]}`}
+                srcSet={`${props.img.alt.split(' ')[1]}`}
+                alt={props.img.alt}
+                loading="lazy" />
+        </ImageListItem>
+        )
 }
