@@ -43,6 +43,15 @@ header h1 {
   display: inline-block;
   font-size: small;
 }
+.inline-b{
+  display: inline-block;
+}
+.continue-box{
+  color: rosybrown;
+}
+#continue{
+  font-size: 4rem;
+}
 .navbar-collapse{
   background-color: #f7f1e3;
   border-radius: 5px;
@@ -55,7 +64,6 @@ header h1 {
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
 .App-link {
   color: #61dafb;
 }

@@ -2,9 +2,12 @@ import React from 'react'
 import Img from './img'
 import axios from 'axios'
 import CreateImg from './createImg'
+import { useNavigate } from 'react-router-dom'
+
 
 function AlbumPics(props){
-
+  const LIMIT_PICS = 4
+  const navigate = useNavigate()
   // useEffect(()=>{
   //   const imgSize = {imgWidth: getComputedStyle(document.documentElement).getPropertyValue('--img-width'),
   //                   imgHeight: getComputedStyle(document.documentElement).getPropertyValue('--img-height')}
@@ -33,7 +36,8 @@ function AlbumPics(props){
   async function handleDeleteImg(imgID){
       try{
         axios.delete('/albums/delete', {data: {albumId: props.albumId, imgId: imgID}})
-        console.log('Deleted image successfully.');
+        .then(() => window.location.reload(false))
+        .catch(e => console.log('something went wrong, delete was not complete well.'))
       }
       catch(e){
         console.log('Could not delete the relevant image\n',e);
@@ -43,11 +47,24 @@ function AlbumPics(props){
   
 
     return <div className="container">
-            <CreateImg albumId={props.albumId} url={props.url}/>
+            {!props.short && <CreateImg albumId={props.albumId} url={props.url}/>}
             <div style={{padding: '20px 0px'}}>
               <div className="row row-cols-6">
                 {props.pics?.map((pic, index) =>
-                <Img key={index} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>
+                {
+                  if(!props.short ){
+                    console.log(!props.short);
+                    console.log(index);
+                    return <Img key={index} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>
+                  }
+                  else if(props.short && index < LIMIT_PICS){
+                    console.log(props.short);
+                    console.log(index);
+                   return <Img key={index} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>
+                  }
+                  else if(props.short && props.pics.length > LIMIT_PICS && index === LIMIT_PICS)
+                  return null
+                }
                 )}  
               </div>
             </div>

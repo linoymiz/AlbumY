@@ -19,10 +19,7 @@ function CreateAlbum(){
         <AddCircleOvutlineRoundedIcon sx={addStyle('icon')} />
       </Button>
       <h6 className='container' style={addStyle('text')}>Click here to add a new album to your collection</h6>
-    </div>
-}
-export default CreateAlbum
-    {/* <Modal show={isOpen}>
+    <Modal show={isOpen}>
          <Modal.Header>
           <Modal.Title>Create A New Album</Modal.Title>
         </Modal.Header>
@@ -40,5 +37,7 @@ export default CreateAlbum
           </button>
         </Modal.Footer>
       </form> 
-      </Modal> 
-    */}
+      </Modal>
+    </div>
+}
+export default CreateAlbum

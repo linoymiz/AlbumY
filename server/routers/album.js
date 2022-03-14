@@ -152,17 +152,15 @@ router.delete('/delete', function(req, res){
                 console.log('Updated the selected album succesfully');
                 req.method = 'GET'
                 try{
-                res.redirect(url)
-                console.log('redirected delte successfully');
+                res.end()
                 }
                 catch(e){
-                    console.log('error from redirecting delete: ', e.message);
+                    console.log('error from delete: ', e.message);
                 }
             } else {
-                alert('Please select a valid image')
+                console.log('Please select a valid image')
             }
         } else {
-            console.log(err)
             console.log('Album does not exist')
         }
     }) 

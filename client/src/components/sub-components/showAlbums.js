@@ -6,7 +6,7 @@ export default function ShowAlbums(props){
     const navigate = useNavigate()
     const handlClick = (path) => {navigate(path);}
 
-    return <div className='container album'>
+    return <div className='container'>
         {props.albums?.map(album =>
             <div>
                 <ShortAlbum 

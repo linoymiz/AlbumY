@@ -6,7 +6,15 @@ function Album(props){
     const url = props.url
     const [data, setData] = useState({album:{albumId: '', albumRef: {}, pictures:[]}, isFetched: false})
     // const [isFetched, setIsFetched] = useState(false)
-    
+  
+    // useEffect(() => {async function fetchItems(){
+    //     const data = await fetch(url)
+    //     const fetchedAlbum = await data.json()
+    //     setAlbum(fetchedAlbum)
+    //     console.log(fetchedAlbum);
+    // } 
+    //     fetchItems()
+    // }, [url])
     useEffect(() => {async function fetchItems(){
         try{
             const currentUrl = window.location.pathname
