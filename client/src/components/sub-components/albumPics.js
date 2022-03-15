@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import ImageList from '@mui/material/ImageList';
 
 function AlbumPics(props){
-  const LIMIT_PICS = 4
+  const LIMIT_PICS = 5
   const navigate = useNavigate()
   // useEffect(()=>{
   //   const imgSize = {imgWidth: getComputedStyle(document.documentElement).getPropertyValue('--img-width'),
@@ -17,21 +17,21 @@ function AlbumPics(props){
   // console.log('albumId', props.albumId);
   // console.log('album', props.album);
 
-  function setImgSize(){
-    switch (isShortAlbum){
-      case true:
-        document.documentElement.style.setProperty('--img-width', '100px')
-        document.documentElement.style.setProperty('--img-height', '100px')
-      break;
-      case false:
-        document.documentElement.style.setProperty('--img-width', '250px')
-        document.documentElement.style.setProperty('--img-height', '250px')
-        break;
-        default:
-          console.log('invalid value to img size switch')
-          break;
-    }
-  }
+  // function setImgSize(){
+  //   switch (isShortAlbum){
+  //     case true:
+  //       document.documentElement.style.setProperty('--img-width', '100px')
+  //       document.documentElement.style.setProperty('--img-height', '100px')
+  //     break;
+  //     case false:
+  //       document.documentElement.style.setProperty('--img-width', '250px')
+  //       document.documentElement.style.setProperty('--img-height', '250px')
+  //       break;
+  //       default:
+  //         console.log('invalid value to img size switch')
+  //         break;
+  //   }
+  // }
 
   async function handleDeleteImg(reqImg){
       try{
@@ -43,12 +43,12 @@ function AlbumPics(props){
         console.log('Could not delete the relevant image\n',e);
       }
   }
-  setImgSize() // change the img dimensions conditionally
+  // setImgSize() // change the img dimensions conditionally
   
   return <div className="container">
             {!props.short && <CreateImg albumId={props.albumId} url={props.url}/>}
             <div style={{padding: '20px 0px'}}>
-            <ImageList sx={{ width: 500, height: 450 }} variant="woven" cols={3} gap={8}>
+            <ImageList sx={{ width: "auto", height: "auto" }} variant ="woven" cols={5} gap={8}>
   {props.pics?.map((pic, index) => {
     if(!props.short ){
     return (<Img key={pic.alt} img={pic} hideDelete={!isShortAlbum} deleteImg={handleDeleteImg}/>)
