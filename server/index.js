@@ -1,7 +1,7 @@
 // import imagesDatabase from './images.js'
 import express from 'express'
 import bodyParser from 'body-parser'
-import albumRouter from './routers/album.js'
+import albumRouter from './routers/albumy.js'
 import connect from './initialize/db.js'
 import cors from 'cors'
 const port = 4000
@@ -23,7 +23,7 @@ app.use(cors(corsOptions))
 connect()
 
 // app.use(express.static('public'))
-app.use('/albums', albumRouter)
+app.use('/AlbumY', albumRouter)
 
 app.listen(port, () => {
     console.log('Server is on port ' + port)

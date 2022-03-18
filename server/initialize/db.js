@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 export default async function connect() {
 
     try {
-        await mongoose.connect('mongodb://localhost:27017/Albums', {
+        await mongoose.connect('mongodb://localhost:27017/AlbumY', {
             useNewUrlParser: true,
             useUnifiedTopology: true
         })
