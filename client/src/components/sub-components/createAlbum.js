@@ -5,6 +5,9 @@ import AddCircleOvutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRo
 import Form from 'react-bootstrap/Form'
 
 function CreateAlbum(){
+    const userId = window.location.pathname.split('/')[2]
+    console.log('user id create album',userId)
+    const path = `/AlbumY/${userId}/create`
     const [isOpen, setIsOpen] = useState(false)
     const handleClick = () => setIsOpen(true)
     const handleClose = () => setIsOpen(false)
@@ -23,7 +26,7 @@ function CreateAlbum(){
          <Modal.Header>
           <Modal.Title>Create A New Album</Modal.Title>
         </Modal.Header>
-        <form action='/albums/create' method='post'>
+        <form action={path} method='post'>
         <Modal.Body>
             <label>Album Title: </label>
             <Form.Control type="text" name='newAlbumName' placeholder="type here your album name" />

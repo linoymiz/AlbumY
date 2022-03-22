@@ -1,24 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import CreateAlbum from '../sub-components/createAlbum';
-import ShowAlbums from '../sub-components/showAlbums';
+import '../../App.css';
+import Header from '../partials/header.js';
+import Footer from '../partials/footer.js';
+// import Nav from './components/nav'
+import HomeAlbums from '../sub-components/homeAlbums.js';
 
-function Home(){
-    const url = 'http://localhost:4000/albums'
-    const [albums, setAlbum] = useState([])   
-    
-    useEffect(() => {async function fetchItems(){
-        const data = await fetch(url)
-        const fetchedAlbum = await data.json()
-        setAlbum(fetchedAlbum)
-        console.log(fetchedAlbum);
-    } 
-        fetchItems()
-    }, [url])
-
-    return <div className='container'>
-      <ShowAlbums albums={albums} />
-      <CreateAlbum />
+export default function Home() {
+  return (
+    <div className= 'page-container'>
+      <Header />
+      <HomeAlbums />
+      <Footer />
     </div>
+  );
 }
-
-export default Home

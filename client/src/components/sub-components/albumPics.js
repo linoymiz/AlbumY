@@ -2,12 +2,10 @@ import React from 'react'
 import Img from './img'
 import axios from 'axios'
 import CreateImg from './createImg'
-import { useNavigate } from 'react-router-dom'
 import ImageList from '@mui/material/ImageList';
 
 function AlbumPics(props){
   const LIMIT_PICS = 5
-  const navigate = useNavigate()
   // useEffect(()=>{
   //   const imgSize = {imgWidth: getComputedStyle(document.documentElement).getPropertyValue('--img-width'),
   //                   imgHeight: getComputedStyle(document.documentElement).getPropertyValue('--img-height')}
@@ -46,6 +44,7 @@ function AlbumPics(props){
   // setImgSize() // change the img dimensions conditionally
   
   return <div className="container">
+  {console.log('inside albumPics comp. pictures:', props.pics)}
             {!props.short && <CreateImg albumId={props.albumId} url={props.url}/>}
             <div style={{padding: '20px 0px'}}>
             <ImageList sx={{ width: "auto", height: "auto" }} variant ="woven" cols={5} gap={8}>

@@ -2,8 +2,9 @@ import mongoose from 'mongoose'
 const {Schema} = mongoose
 
 export const PictureSchema = new Schema({
-    src: String,
-    alt: String
+    albumId: {type: String, required: true},
+    src: {type: String, required: true},
+    alt: {type: String, required: true}
 })
 export const Picture = mongoose.model('Picture', PictureSchema)
 

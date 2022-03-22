@@ -5,13 +5,14 @@ import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 
 export default function ShortAlbum(props){
     function handleClick(){
-        const generatedPath = 'albums/' + props.albumId
+        const generatedPath = `/AlbumY/${props.userId}/${props.albumId}`
         props.navToAlbum(generatedPath)
     }
     return <div className = "container rounded border-2 album">
         <h3>{props.albumName}</h3>
         <div className= "container">
             <div className="container inline-b" style={{width:'85%'}}>
+            {console.log('shortAlbum pics: ', props.albumPics)}
                 <AlbumPics pics={props.albumPics} albumId={props.albumId} short={true} />
             </div>
             <div className="container inline-b continue-box" style={{width: '15%'}}>

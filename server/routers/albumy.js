@@ -1,11 +1,13 @@
 import express from 'express'
 const router = express.Router()
+import mongoose from 'mongoose'
 import {User} from '../models/userModel.js'
 import {Album} from '../models/albumModel.js'
 import {Picture} from '../models/pictureModel.js'
 import multer from 'multer'
 import fs, {unlink} from 'fs'
 import bcrypt from 'bcrypt'
+import { callbackify } from 'util'
 const saltRounds = 10;
 
 const storage = multer.diskStorage({
@@ -45,27 +47,11 @@ function generateRelevantNo(pics,size){
         return parseInt(lastNum) + 1;
     }
 }
-function checkUserExists(userEmail){
-    User.findOne({email: userEmail}, function(err, user){
-        if(err){
-            console.log('something is wrong in seraching user by email');
-        }
-        else{
-            if(user){ // this user already exists
-                return true
-            }
-            else{
-                return false
-            }
-        }
-    })
-}
-router.get('/:albumId', function (req, res) {
+router.get('/:userId/:albumId', function (req, res) {
     console.log('album to search: ', req.params.albumId);
     Album.findById(req.params.albumId, function (err, album) {
         console.log('finding...');
         if (album) {
-            console.log('the album is', album);
             res.send(album)
         } else {
             console.log('Not Found');
@@ -74,53 +60,115 @@ router.get('/:albumId', function (req, res) {
     })
 })
 //get all the albums in the collection
-router.get('/', function (req, res) {
-    Album.find(function (err, albums) {
-        if (albums) {
-            res.end(JSON.stringify(albums))
-        } else {
-            res.send('The collection is empty')
-        }
-
-    })
+router.get('/:userId', function (req, res) {
+    const userId = req.params.userId
+    User.aggregate( [
+        {
+          $lookup:
+            {
+              from: "albums",
+              localField: "albumsids",
+              foreignField: "_id",
+              as: "albums_docs"
+            }
+       }
+     ]).then(result => {
+            Album.find({ '_id': { $in: (result[0].albumsIds)} }, function(err, userAlbums){
+                if(err) console.log('err while trying to get all albums')
+                else{
+                    res.status(200).send(userAlbums)
+                    console.log('succeeded getting all the albums')
+                }
+            })
+            }
+         )
+       .catch(err => {console.log('error while trying to get albums of user', err)})
 })
 router.post('/register', function(req, res, err){
     const {fName, lName, email, password} = req.body
-
-    const isUserExists = checkUserExists(email)
-    if(!isUserExists){
-        bcrypt.hash(password, saltRounds, function(err, hash) {
-            if(err){
-                console.log('could not able to hash password', err)
-            }
-            else{
-                User.create({firstName: fName, lastName: lName, email: email, password: hash}, function(err){
+    User.findOne({ email: userEmail }).then(function(err, user){
+        if(err){
+            console.log('something is wrong in seraching user by email');
+        }
+        else{
+                  
+            if(!user){ // user does not exists
+                bcrypt.hash(password, saltRounds, function(err, hash) {
                     if(err){
-                        console.log('Could not register user', err);
+                        console.log('could not able to hash password', err)
                     }
                     else{
-                        console.log('Successfully added user');
-                        res.status(200).send()
+                        User.create({firstName: fName, lastName: lName, email: email, password: hash}, function(err, user){
+                            if(err){
+                                console.log('Could not register user', err);
+                            }
+                            else{
+                                console.log('Successfully added user');
+                                res.status(200).send(user)
+                            }
+                        })
                     }
                 })
             }
-        })
-    }
-    else {
-        res.send('user already exists')
-    }
+            else {
+                res.send('user already exists')
+            }
+        }
+    })
 })
-router.post('/create', function(req, res, err){
-    const albumName = req.body.newAlbumName;
+        
+router.post('/sign', function(req, res, err){
+    const {email: userEmail, password: passwordInput} = req.body.user
+    User.findOne({ email: userEmail }, function(err, user){
+        if(err){
+            console.log('something is wrong in seraching user by email');
+        }
+        else{       
+            console.log('USER is: ', user);
+            if(user){
+                bcrypt.compare(passwordInput, user.password, function(err, result) {
+                    if(err){
+                        console.log('could not able to make a comparation using \'bcrypt\'');
+                    }
+                    else{
+                        if(result === true){
+                            console.log('User successfully signed in');
+                            res.status(200).send(user._id)
+                        }
+                        else{
+                            console.log('Invalid password');
+                            res.end()
+                        }
+                    }
+                })
+            }
+            else{
+                console.log('user does not exists with the current mail address\nif you meant to register as a new user please click on the \'Register\' button')
+            }
+        }
+    })
+})
+router.post('/:userId/create', function(req, res, err){
+    const userId = req.params.userId
+    const albumName = req.body.newAlbumName
 
-    Album.create({name: albumName}, function(err){
+    Album.create({name: albumName, ownerId: userId}, function(err, newAlbum){
         if(err){
             // res.status(400)
             console.log('Could not create a new album due to invalid name')
         }
         else{
-            console.log('Successfully created a new album');
-            res.redirect('/')
+            console.log('Successfully created a new album', newAlbum);
+            User.findByIdAndUpdate(userId, { "$push": {"albumsIds": newAlbum._id}},
+                function(err, user){
+                    if(err){
+                        console.log('error while adding the new album into user', err);
+                    }
+                    else
+                    console.log('Successfully added the new album to user', user);
+                    // res.status(200).send()
+                    res.redirect('back')
+                })
         }
 
     })

@@ -8,12 +8,10 @@ export default function ShowAlbums(props){
 
     return <div className='container'>
         {props.albums?.map(album =>
-            <div>
                 <ShortAlbum 
-                    key={album._id} albumId={album._id} 
+                    key={album._id} albumId={album._id} userId={props.userId}
                     navToAlbum={handlClick} 
                     albumName={album.name} albumPics={album.pictures} />            
-            </div>
         )}
     </div>
 }
