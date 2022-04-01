@@ -7,37 +7,35 @@ import {Picture} from '../models/pictureModel.js'
 import multer from 'multer'
 import fs, {unlink} from 'fs'
 import bcrypt from 'bcrypt'
-import { callbackify } from 'util'
+
 const saltRounds = 10;
-
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const path = './uploads'
-        fs.mkdirSync(path, { recursive: true })
-        return cb(null, path)
-    },
-    filename: function (req, file, cb) {
-        const suffix = createASuffix(file)
-        cb(null, file.fieldname + '-' + suffix)
+            destination: function (req, file, cb) {
+            const path = "C:/Users/linoy/OneDrive/Documents/Projects/Album/client/public/uploads"
+            fs.mkdirSync( path , { recursive: true })
+            return cb(null, path)
+        },
+        filename: function (req, file, cb) {
+            const suffix = createASuffix(file)
+            cb(null, file.fieldname + '-' + suffix)
+        }
+      })
+      const upload = multer({ storage: storage})
+    
+      function createASuffix(file){
+            //the unique suffix
+            const now = new Date()
+        const nowFormat = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + '-' + now.getTime()
+        const uniqueSuffix = nowFormat + '-' + Math.round(Math.random() * 1E9)
+    
+        //the file type
+        const fileMimeType = file.mimetype.split('/')
+        const fileType = fileMimeType[1]
+    
+        return uniqueSuffix + '.' + fileType
     }
-})
-const upload = multer({ storage: storage})
-
 function getAlbumSize(album) {
     return (album.pictures.length)
-}
-
-function createASuffix(file){
-    //the unique suffix
-    const now = new Date()
-    const nowFormat = now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + '-' + now.getTime()
-    const uniqueSuffix = nowFormat + '-' + Math.round(Math.random() * 1E9)
-
-    //the file type
-    const fileMimeType = file.mimetype.split('/')
-    const fileType = fileMimeType[1]
-
-    return uniqueSuffix + '.' + fileType
 }
 
 function generateRelevantNo(pics,size){
@@ -47,43 +45,6 @@ function generateRelevantNo(pics,size){
         return parseInt(lastNum) + 1;
     }
 }
-router.get('/:userId/:albumId', function (req, res) {
-    console.log('album to search: ', req.params.albumId);
-    Album.findById(req.params.albumId, function (err, album) {
-        console.log('finding...');
-        if (album) {
-            res.send(album)
-        } else {
-            console.log('Not Found');
-            res.send('Album does not exist')
-        }
-    })
-})
-//get all the albums in the collection
-router.get('/:userId', function (req, res) {
-    const userId = req.params.userId
-    User.aggregate( [
-        {
-          $lookup:
-            {
-              from: "albums",
-              localField: "albumsids",
-              foreignField: "_id",
-              as: "albums_docs"
-            }
-       }
-     ]).then(result => {
-            Album.find({ '_id': { $in: (result[0].albumsIds)} }, function(err, userAlbums){
-                if(err) console.log('err while trying to get all albums')
-                else{
-                    res.status(200).send(userAlbums)
-                    console.log('succeeded getting all the albums')
-                }
-            })
-            }
-         )
-       .catch(err => {console.log('error while trying to get albums of user', err)})
-})
 router.post('/register', function(req, res, err){
     const {fName, lName, email, password} = req.body
     User.findOne({ email: userEmail }).then(function(err, user){
@@ -116,7 +77,6 @@ router.post('/register', function(req, res, err){
         }
     })
 })
-        
 router.post('/sign', function(req, res, err){
     const {email: userEmail, password: passwordInput} = req.body.user
     User.findOne({ email: userEmail }, function(err, user){
@@ -148,6 +108,43 @@ router.post('/sign', function(req, res, err){
         }
     })
 })
+router.get('/:userId/:albumId', function (req, res) {
+    const albumID = req.params.albumId
+    console.log('Trying to find the album pictures', albumID);
+    Album.findById(albumID, function (err, album) {
+        if (album) {
+            console.log('album was found', album);
+            res.send(album)
+        } else {
+            console.log('User album was not found', err);
+        }
+    })
+})
+//get all the albums in the collection
+router.get('/:userId', function (req, res) {
+    const userId = req.params.userId
+    User.aggregate( [
+        {
+          $lookup:
+            {
+              from: "albums",
+              localField: "albumsids",
+              foreignField: "_id",
+              as: "albums_docs"
+            }
+       }
+     ]).then(result => {
+            Album.find({ '_id': { $in: (result[0].albumsIds)} }, function(err, userAlbums){
+                if(err) console.log('err while trying to get all albums')
+                else{
+                    res.status(200).send(userAlbums)
+                    console.log('succeeded getting all the albums')
+                }
+            })
+            }
+         )
+       .catch(err => {console.log('error while trying to get albums of user', err)})
+})
 router.post('/:userId/create', function(req, res, err){
     const userId = req.params.userId
     const albumName = req.body.newAlbumName
@@ -173,24 +170,28 @@ router.post('/:userId/create', function(req, res, err){
 
     })
 })
-router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
-    const albumId = req.body.albumId
+router.post('/:userId/:albumId/add', upload.single('GalleryImg'), function (req, res, next) {
+    const {albumId, userId} = req.params
+    console.log('req.file', req.file)
     const {path, filename }= req.file
-    const url = '/albums/' + albumId
-    console.log('in add route:\n albumId: ' + albumId + '\npath: '+ path + '\n fileName: '+ filename);
+    const pathAfterPost = `/AlbumY/${userId}/${albumId}`
+    console.log('in add route:\nuserId: ' + userId+ '\nalbumId: ' + albumId);
+    console.log(`path is ${path} \nfilename is ${filename}`)
     
     Album.findById(albumId,
         function (err, album) {
         if (album) {
             const albumString = JSON.stringify(album)
             console.log('album JSON', albumString);
-            const albumSize = getAlbumSize(album) + 1
-            console.log('album new size is: '+ albumSize);
             // const imgSrc = req.body.srcInput
             if (path !== null) {
                 //the image src is valid
+                const albumSize = getAlbumSize(album) + 1
+                console.log('album new size is: '+ albumSize)
+                
                 const newImg = new Picture({
-                    src: path.replace('\\', '/'),
+                    albumId: albumId,
+                    src: path.replace(/\\/g,'/'),
                     alt: 'pic#' + generateRelevantNo(album.pictures, albumSize - 1) + ' ' + filename      
                 })
                 newImg.save()
@@ -205,8 +206,8 @@ router.post('/add', upload.single('GalleryImg'), function (req, res, next) {
                         else res.end(err + '\ncould not able to update the size: ' + albumSize)
                     }
                 )
-               console.log('Updated the selected album succesfully');
-                res.redirect(url)
+               console.log('Updated the selected album succesfully')
+                res.redirect(pathAfterPost)
             } else {
                 res.end('Please select a valid image')
             }
@@ -263,11 +264,13 @@ router.delete('/delete', function(req, res){
 })
 
 export default router
-        // [0]   {fieldname: 'input',
-        // [0]   originalname: '20180808_115651 - Copy (2).jpg',
-        // [0]   encoding: '7bit',
-        // [0]   mimetype: 'image/jpeg',
-        // [0]   destination: 'uploads',
-        // [0]   filename: 'input-1645768067781-114320185',
-        // [0]   path: 'uploads\\input-1645768067781-114320185',
-        // [0]   size: 536628}
+// {
+// fieldname: 'GalleryImg',      
+// originalname: 'IMG-20181124-WA0018.jpg',
+// encoding: '7bit',
+// mimetype: 'image/jpeg',       
+// destination: './uploads',     
+// filename: 'GalleryImg-28-3-2022-1648496409312-998682733.jpeg',    
+// path: 'uploads\\GalleryImg-28-3-2022-1648496409312-998682733.jpeg',
+// size: 753219
+//}

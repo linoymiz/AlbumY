@@ -35,13 +35,13 @@ export default function RegisterForm() {
       <div>
         <TextField
           required
-          id="outlined-required"
+          id="fName"
           name="fName"
           label="First Name"
         />
         <TextField
           required
-          id="outlined-required"
+          id="lName"
           name="lName"
           label="Last Name"
         />
@@ -49,14 +49,14 @@ export default function RegisterForm() {
         <TextField
           required
           fullWidth
-          id="outlined-required"
+          id="email"
           name="email"
           label="Email Address"
         />
         <br />
         <TextField
           required
-          id="outlined-password-input"
+          id="password"
           name="password"
           label="Password"
           type="password"

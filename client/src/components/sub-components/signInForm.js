@@ -32,7 +32,7 @@ export default function SignInForm() {
     function handleSubmit(e){
         e.preventDefault()
         axios.post(
-            '/AlbumY/sign',
+            'http://localhost:4000/AlbumY/sign',
             {user})
             .then(response => {
                 if (response.status === 200){
