@@ -11,7 +11,7 @@ export default function ShowAlbums(props){
                 <ShortAlbum 
                     key={album._id} albumId={album._id} userId={props.userId}
                     navToAlbum={handlClick} 
-                    albumName={album.name} albumPics={album.pictures} />            
+                    albumName={album.name} albumPicsIds={album.picturesIds} />            
         )}
     </div>
 }

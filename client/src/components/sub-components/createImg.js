@@ -34,6 +34,7 @@ function CreateImg(props) {
             axios.post(pathToPost, bodyFormData)
            .then(response => {
                 console.log('Succeeded posting new image')
+                window.location.reload(false)
           })
           .catch(err => console.log('Was unable to make a post request for new image', err))
         }

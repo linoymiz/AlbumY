@@ -9,9 +9,12 @@ export default function HomeAlbums(){
     
     useEffect(() => {async function fetchItems(){
         const data = await fetch(url)
-        const fetchedAlbums = await data.json()
-        setAlbums(fetchedAlbums)
-        console.log(fetchedAlbums);
+        await data.json()
+        .then(fetchedAlbums => {
+            setAlbums(fetchedAlbums)
+            console.log('albums to show ', fetchedAlbums)
+        })
+        .catch(err => console.log('was not able to fetch user albums', err))
     } 
         fetchItems()
     }, [url])

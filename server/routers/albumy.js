@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt'
 const saltRounds = 10;
 const storage = multer.diskStorage({
             destination: function (req, file, cb) {
-            const path = "C:/Users/linoy/OneDrive/Documents/Projects/Album/client/public/uploads"
+            const path = "C:/Users/linoy/OneDrive/Documents/Projects/AlbumY/client/public/uploads"
             fs.mkdirSync( path , { recursive: true })
             return cb(null, path)
         },
@@ -35,7 +35,7 @@ const storage = multer.diskStorage({
         return uniqueSuffix + '.' + fileType
     }
 function getAlbumSize(album) {
-    return (album.pictures.length)
+    return (album.picturesIds.length)
 }
 
 function generateRelevantNo(pics,size){
@@ -108,22 +108,12 @@ router.post('/sign', function(req, res, err){
         }
     })
 })
-router.get('/:userId/:albumId', function (req, res) {
-    const albumID = req.params.albumId
-    console.log('Trying to find the album pictures', albumID);
-    Album.findById(albumID, function (err, album) {
-        if (album) {
-            console.log('album was found', album);
-            res.send(album)
-        } else {
-            console.log('User album was not found', err);
-        }
-    })
-})
-//get all the albums in the collection
 router.get('/:userId', function (req, res) {
-    const userId = req.params.userId
+    const userId = mongoose.Types.ObjectId(req.params.userId)
     User.aggregate( [
+        {
+            $match: {_id: userId}
+        },
         {
           $lookup:
             {
@@ -134,17 +124,59 @@ router.get('/:userId', function (req, res) {
             }
        }
      ]).then(result => {
+         console.log('result of user albums is ', result);
             Album.find({ '_id': { $in: (result[0].albumsIds)} }, function(err, userAlbums){
-                if(err) console.log('err while trying to get all albums')
+                if(err) console.log('err while trying to get all user\'s albums', err)
                 else{
+                    console.log('succeeded getting all the albums', userAlbums)
                     res.status(200).send(userAlbums)
-                    console.log('succeeded getting all the albums')
                 }
             })
             }
          )
        .catch(err => {console.log('error while trying to get albums of user', err)})
 })
+router.get('/:userId/:albumId', function (req, res) {
+    const albumID = req.params.albumId
+    // console.log('Trying to find the album pictures', albumID);
+    Album.findById(albumID, function (err, album) {
+        if (album) {
+            console.log('album was found', album);
+            res.send(album)
+        } else {
+            console.log('User album was not found', err);
+        }
+    })
+})
+// get all the pictures in the user album
+router.get('/:userId/:albumId/pictures', function (req, res) {
+    const albumId = mongoose.Types.ObjectId(req.params.albumId)
+    Album.aggregate( [
+        {
+            $match: {_id: albumId}
+        },
+        {
+          $lookup:
+            {
+              from: "pictures",
+              localField: "picturesids",
+              foreignField: "_id",
+              as: "pictures_docs"
+            }
+       }
+     ]).then(result => {
+            Picture.find({ '_id': { $in: (result[0].picturesIds)} }, function(err, userAlbumPics){
+                if(err) console.log('err while trying to get all albums\' pictures', err)
+                else{
+                    console.log('succeeded getting all the albums', userAlbumPics)
+                    res.status(200).send(userAlbumPics)
+                }
+            })
+            }
+         )
+       .catch(err => {console.log('error while trying to get albums\' pics of user', err)})
+})
+//get all the albums in the collection
 router.post('/:userId/create', function(req, res, err){
     const userId = req.params.userId
     const albumName = req.body.newAlbumName
@@ -172,7 +204,7 @@ router.post('/:userId/create', function(req, res, err){
 })
 router.post('/:userId/:albumId/add', upload.single('GalleryImg'), function (req, res, next) {
     const {albumId, userId} = req.params
-    console.log('req.file', req.file)
+    console.log('req.file:', req.file)
     const {path, filename }= req.file
     const pathAfterPost = `/AlbumY/${userId}/${albumId}`
     console.log('in add route:\nuserId: ' + userId+ '\nalbumId: ' + albumId);
@@ -192,10 +224,10 @@ router.post('/:userId/:albumId/add', upload.single('GalleryImg'), function (req,
                 const newImg = new Picture({
                     albumId: albumId,
                     src: path.replace(/\\/g,'/'),
-                    alt: 'pic#' + generateRelevantNo(album.pictures, albumSize - 1) + ' ' + filename      
+                    alt: 'pic#' + generateRelevantNo(album.picturesIds, albumSize - 1) + ' ' + filename      
                 })
                 newImg.save()
-                album.pictures.push(newImg)
+                album.picturesIds.push(newImg._id)
                 Album.findOneAndUpdate(
                     {_id: albumId}, 
                     {numOfPics: albumSize},
@@ -207,7 +239,7 @@ router.post('/:userId/:albumId/add', upload.single('GalleryImg'), function (req,
                     }
                 )
                console.log('Updated the selected album succesfully')
-                res.redirect(pathAfterPost)
+                res.end()
             } else {
                 res.end('Please select a valid image')
             }
@@ -216,53 +248,96 @@ router.post('/:userId/:albumId/add', upload.single('GalleryImg'), function (req,
         }
     })
 })
-router.delete('/delete', function(req, res){
+router.delete('/:userId/:albumId/delete', function(req, res){
     // console.log('image id: ' + req.body.imgId + '\nalbum id: ' + req.body.albumId);
-    const albumId = req.body.albumId
-    const url = '/albums/' + albumId
+    const {userId, albumId} = req.params
+    // const url = `/AlbumY/${userId}/${albumId}`
     Album.findOne({
         _id: albumId
     }, function (err, album) {
         if (album) {
+            console.log(('found album, in delete img route: ', album));
             const albumSize = getAlbumSize(album) - 1
             const img = req.body.img
+            // const imgId = mongoose.Types.ObjectId(img._id)
             const imgId = img._id
+
+            // const imgSrc = `../`
             if (imgId) {
                 // delete the image from the picture and from the album collections
-                Picture.deleteOne({_id: imgId}).then(console.log('Deleted selected image: ' + imgId)).catch(function(err){ console.log(err)})
-                album.pictures = album.pictures.filter(function(pic){
-                    return pic._id != imgId
-                })
-                //update the number of pics inside the album
-                Album.updateOne({
-                    _id: albumId
-                }, {
-                    $set: { numOfPics: albumSize}
-                }).then(console.log('updated size succesfully to ' + albumSize)
-                ).catch(function(err){
-                    console.log(err + '\ncould not able to update the size ' + albumSize)}
-                )
-                album.save()
-                console.log('Updated the selected album succesfully');
-                unlink(img.src, (err) => {
-                    if(err) console.log('error from deleting img', err)
-                    else console.log('successfully deleted img from the uploads folder!\nimg src: ', img.src);
-                })
-                try{
-                res.end()
-                }
-                catch(e){
-                    console.log('error from delete: ', e.message);
-                }
+                Picture.deleteOne({_id: imgId})
+                    .then(() => {
+                        console.log('Deleted selected image: ' + imgId)
+                        console.log( `imgId is ${imgId}`);
+                        //detach the pic from its album
+                        // const filteredArr = album.pictures.filter(function(pic){       
+                        //     console.log(`pic._id is ${pic._id}`)
+                        //     return pic._id != imgId
+                        // })
+                        // console.log(`filtered Array : ${filteredArr}`);
+                        // filteredArr.forEach((pic, index) => {
+                        //     album.pictures.splice(index, 1)
+                        // });
+                        const indexToDelBy = album.picturesIds.findIndex(picId => picId == imgId)
+                        console.log(`the index for the requested image is #${indexToDelBy}`);
+                        album.picturesIds.splice(indexToDelBy, 1)
+                        console.log('album pics is now:', album.picturesIds);
+                        Album.updateOne({_id: albumId}, {$set: { numOfPics: albumSize}})
+                                .then(()=>{
+                                    console.log('updated size, after deleting selected pic, succesfully to be ' + albumSize)
+                                    album.save()
+                                    console.log('Updated the selected album succesfully');
+                                    unlink(img.src, (err) => {
+                                        if(err) console.log('Was not able to delete img from storage', err)
+                                        else{
+                                            console.log('successfully deleted img from the uploads folder!\nimg src: ', img.src)
+                                            res.end()
+                                        } 
+                                    })
+                                })
+                                .catch((err) => console.log(err + '\ncould not able to update the size ' + albumSize))
+                    })
+                    .catch(function(err){ console.log("Was not able to delete the picture", err)})
+                    
+                
+                    
             } else {
                 console.log('Please select a valid image')
             }
-        } else {
+                    //update the number of pics inside the album
+                } else {
             console.log('Album does not exist')
         }
     }) 
 })
-
+router.patch('/:userId/:albumId/edit', function(req,res){
+    const {userId, albumId} = req.params
+    const {imgId, info: imgContent} = req.body.img
+    console.log(`editing img ${imgId} on ${imgContent.title} & ${imgContent.content}`);
+    Picture.findByIdAndUpdate(imgId, {info: imgContent},
+        function (err, reqImg) {
+        if (reqImg) {
+            console.log('Updated the selected image succesfully')
+            res.end()
+            
+        } else {
+            res.end('Image does not exist', err)
+        }
+    })
+    // Album.findById(albumId, 
+    //     function (err, album) {
+    //     if (album) {
+    //         let reqImg = album.picturesIds.find(id => id == imgId)
+    //         console.log('reqImg', reqImg);
+    //         reqImg.info = imgContent
+    //         console.log('Updated the selected image succesfully', reqImg)
+    //         res.end()
+            
+    //     } else {
+    //         res.end('album does not exist', err)
+    //     }
+    // })
+})
 export default router
 // {
 // fieldname: 'GalleryImg',      

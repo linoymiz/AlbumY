@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 const {Schema} = mongoose
-import {PictureSchema} from './pictureModel.js'
+// import {Picture} from './pictureModel.js'
 
 
 const AlbumSchema = new Schema({
@@ -8,7 +8,7 @@ const AlbumSchema = new Schema({
     name: {type: String, required: true},
     creationDate: {type: String, default: (new Date()).toLocaleDateString('en-GB')},
     numOfPics: {type: Number, default: 0},
-    pictures: [PictureSchema]
+    picturesIds: [{type: mongoose.ObjectId, ref: 'Picture'}]
 })
 
 export const Album = mongoose.model('Album', AlbumSchema)
