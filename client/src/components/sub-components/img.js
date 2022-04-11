@@ -9,10 +9,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
-// import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';
-import { Box, fontWeight } from '@mui/system';
-import axios from 'axios';
+import { Box } from '@mui/system';
 
 export default function Img(props){
     const [isExpanded, setExpanded] = useState(false)
@@ -25,8 +23,13 @@ export default function Img(props){
       }
     })
     const classes = useStyles()
-    function handleClick(){
+
+    function handleDeleteImg(){
         props.deleteImg(props.img)
+    }
+    function handleZoomImg(){
+      console.log('passing ', props.img);
+      props.zoomImg(props.img)
     }
     function handleExpand(){
       setExpanded(true)
@@ -43,10 +46,10 @@ export default function Img(props){
     return (<Grid item sm={6} md={4} lg={3}>
             <Card sx={{ maxWidth: 345 }}>
       <CardActions hidden={props.hide}>
-            <IconButton className='delete' sx={{position:"relative", right:"0"}} onClick={handleClick}>
+            <IconButton className='delete' sx={{position:"relative", right:"0"}} onClick={handleDeleteImg}>
                 <DeleteIcon />
             </IconButton>
-            <IconButton ><ZoomInIcon /></IconButton>
+            <IconButton onClick={handleZoomImg} ><ZoomInIcon /></IconButton>
         </CardActions>
       <CardMedia
         component="img"
@@ -73,7 +76,6 @@ export default function Img(props){
           onClick = {handleExpand} />        
         <TextField
           id="outlined-multiline-static"
-        //   label="Multiline"
           multiline
           variant="standard"
           maxRows={isExpanded ? 4 : 1}
@@ -96,11 +98,3 @@ export default function Img(props){
     </Card>
     </Grid>)
 }
-         {/* 
-            <img 
-            style={{objectFit: "cover", filter: "none", borderRadius: "8px"}}
-                src={imgSrc}
-                srcSet={imgSrc}
-                alt={imgAlt}
-                loading="lazy" /> 
-         */}
