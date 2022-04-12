@@ -46,7 +46,7 @@ function generateRelevantNo(pics,size){
     }
 }
 router.post('/register', function(req, res, err){
-    const {fName, lName, email, password} = req.body
+    const {fname, lname, email: userEmail, password} = req.body.user
     User.findOne({ email: userEmail }).then(function(err, user){
         if(err){
             console.log('something is wrong in seraching user by email');
@@ -59,7 +59,7 @@ router.post('/register', function(req, res, err){
                         console.log('could not able to hash password', err)
                     }
                     else{
-                        User.create({firstName: fName, lastName: lName, email: email, password: hash}, function(err, user){
+                        User.create({firstName: fname, lastName: lname, email: userEmail, password: hash}, function(err, user){
                             if(err){
                                 console.log('Could not register user', err);
                             }
@@ -184,7 +184,7 @@ router.post('/:userId/create', function(req, res, err){
     Album.create({name: albumName, ownerId: userId}, function(err, newAlbum){
         if(err){
             // res.status(400)
-            console.log('Could not create a new album due to invalid name')
+            console.log('Could not create a new album due to invalid name', albumName)
         }
         else{
             console.log('Successfully created a new album', newAlbum);

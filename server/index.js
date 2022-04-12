@@ -8,6 +8,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 import path from 'path'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const port = 4000
 const corsOptions ={
@@ -30,7 +32,7 @@ connect()
 app.use(express.static('public'))
 app.use('/AlbumY', albumRouter)
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
     console.log('Server is on port ' + port)
 })
 // console.log(imagesDatabase);
