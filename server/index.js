@@ -30,7 +30,7 @@ app.use(cors(corsOptions))
 connect()
 
 app.use(express.static('public'))
-app.use('/', albumRouter)
+app.use('', albumRouter)
 
 app.listen(process.env.PORT || port, () => {
     console.log('Server is on port ' + port)
