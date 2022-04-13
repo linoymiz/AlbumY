@@ -4,7 +4,7 @@ import ShowAlbums from './showAlbums';
 
 export default function HomeAlbums(){
     const userId = window.location.pathname.split('/')[2]
-    const url = `http://localhost:4000/AlbumY/${userId}`
+    const url = `https://album-my.herokuapp.com/${userId}`
     const [albums, setAlbums] = useState([])   
     
     useEffect(() => {async function fetchItems(){

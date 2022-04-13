@@ -12,7 +12,7 @@ function Album(props){
 
     useEffect(() => {async function fetchItems(){
         try{           
-            const urlToFetch = `http://localhost:4000/AlbumY/${userId}/${albumId}`
+            const urlToFetch = `https://album-my.herokuapp.com/${userId}/${albumId}`
             console.log('url to getch pictures in album: ', urlToFetch);
             // setData({album: data.album, isFetched: true})
             await fetch(urlToFetch)
