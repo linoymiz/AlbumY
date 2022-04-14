@@ -32,6 +32,9 @@ connect()
 app.use(express.static('public'))
 app.use('', albumRouter)
 
+if (process.env.NODE_ENV === 'production'){
+    app.use(express.static('../client/build'))
+}
 app.listen(process.env.PORT || port, () => {
     console.log('Server is on port ' + port)
 })
